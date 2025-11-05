@@ -36,7 +36,8 @@ Follow these steps to set up and run the project on your local machine.
     cd serpengine_app
     ```
 
-2. **Set up the Frontend**:
+2. **Set up the Frontend**: (Change BACKEND_URL Variable to http://localhost:5001`.
+)
 
     ```bash
     cd serpengine
