@@ -12,7 +12,7 @@ This project is a fully in-house Search Engine Results Page (SERP) engine that s
 The application is composed of three main components:
 
 1. **Frontend**: A Next.js application that provides a clean, user-friendly interface for entering search queries and viewing results. It includes a dark mode toggle for user comfort.
-2. **Backend**: A Python Flask server that handles the scraping of search results from DuckDuckGo (to avoid Google's bot detection) and serves them to the frontend.
+2. **Backend**: A Python Flask server that handles the scraping of search results from Web and serves them to the frontend.
 3. **Local LLM**: The backend leverages a locally running Ollama instance with the `tinyllama` model to generate summaries of the search results. This allows for powerful, offline AI capabilities without relying on external services.
 
 ## Getting Started

@@ -7,7 +7,7 @@ from urllib.parse import quote
 app = Flask(__name__)
 CORS(app)
 
-OLLAMA_API = "http://localhost:11434/api/generate"
+OLLAMA = "http://localhost:11434/api/generate"
 
 def scrape_duckduckgo(query, num_results=10):
     """Scrape DuckDuckGo search results."""
@@ -41,7 +41,7 @@ def overview_with_ollama(all_descriptions):
             "Summarize the above in 3-4 sentences using natural, conversational language:"
         )
         response = requests.post(
-            OLLAMA_API,
+            OLLAMA,
             json={
                 "model": "tinyllama",
                 "prompt": prompt,
@@ -66,8 +66,6 @@ def overview_with_ollama(all_descriptions):
     except Exception as e:
         print(f"Error generating overview: {e}")
         return "Overview generation failed."
-
-
 
 
 @app.route('/search', methods=['POST'])
@@ -106,6 +104,6 @@ def health():
     return jsonify({'status': 'ok', 'message': 'Server is running'}), 200
 
 if __name__ == '__main__':
-    print("🚀 Starting Flask server on http://localhost:5001")
-    print("📡 Connected to Ollama at http://localhost:11434")
+    print(" Starting Flask server on http://localhost:5001")
+    print(" Connected to Ollama at http://localhost:11434")
     app.run(debug=True, host='0.0.0.0', port=5001)
