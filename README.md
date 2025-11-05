@@ -7,7 +7,7 @@ This project is a fully in-house Search Engine Results Page (SERP) engine that s
 - **Can you build your own Google Search API?** The goal is to create a self-contained SERP engine that fetches and organizes Google search results independently.
 - **Can your tool summarize or categorize search results using a lightweight local LLM?** The project integrates a local LLM to provide concise summaries of the search results, demonstrating the power of local AI.
 
-[![Watch the demo](https://img.youtube.com/vi/_JO7_fIhnj4/maxresdefault.jpg)](https://youtu.be/_JO7_fIhnj4)
+[![Watch the demo](https://img.youtube.com/vi/kUW-jdJp8o8/maxresdefault.jpg)](https://youtu.be/kUW-jdJp8o8)
 
 ## How It Works
 
