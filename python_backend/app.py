@@ -15,8 +15,10 @@ HF_MODEL_URL = "https://api-inference.huggingface.co/models/mistralai/Mistral-7B
 def perform_search(query, num_results=10):
     try:
         url = f"https://html.duckduckgo.com/html/?q={quote(query)}"
-        headers = {"User-Agent": "Mozilla/5.0"}
-        response = requests.get(url, headers=headers, timeout=10)
+        headers = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+        }
+        response = requests.get(url, headers=headers, timeout=15)
         response.raise_for_status()
         soup = BeautifulSoup(response.text, "html.parser")
         results = []
@@ -33,6 +35,7 @@ def perform_search(query, num_results=10):
     except Exception as e:
         print(f"Error performing search: {e}")
         return []
+
 
 def overview_with_huggingface(all_descriptions):
     try:
