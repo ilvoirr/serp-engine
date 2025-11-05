@@ -2,13 +2,16 @@
 import React, { useState, useRef } from 'react'
 import { CornerDownLeft, Moon, Sun, ArrowLeft } from 'lucide-react'
 
+
 function cn(...inputs: any[]) { return inputs.filter(Boolean).join(' '); }
+
 
 interface SearchResult {
   title: string;
   link: string;
   description: string;
 }
+
 
 function extractGoogleUrl(link: string) {
   try {
@@ -23,6 +26,7 @@ function extractGoogleUrl(link: string) {
   }
 }
 
+
 export default function Page() {
   const [input, setInput] = useState('')
   const [isDarkMode, setIsDarkMode] = useState(false)
@@ -34,6 +38,8 @@ export default function Page() {
   const [summaryLoading, setSummaryLoading] = useState(false)
   const [hasSearched, setHasSearched] = useState(false)
 
+  const BACKEND_URL = 'https://455db55c4f14.ngrok-free.app'
+
   const handleInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setInput(e.target.value)
     if (textareaRef.current) {
@@ -41,6 +47,7 @@ export default function Page() {
       textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`
     }
   }
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -52,7 +59,7 @@ export default function Page() {
     setResults([])
     setHasSearched(true)
     try {
-      const response = await fetch('http://localhost:5001/search', {
+      const response = await fetch(`${BACKEND_URL}/search`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ query: input }),
@@ -62,7 +69,7 @@ export default function Page() {
       setResults(data.results)
       setShowResults(true)
       setInput('')
-      const res2 = await fetch('http://localhost:5001/overview', {
+      const res2 = await fetch(`${BACKEND_URL}/overview`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ results: data.results.slice(0, 4) }) 
@@ -75,12 +82,13 @@ export default function Page() {
       }
     } catch (error) {
       console.error('Error fetching:', error)
-      alert('Error connecting to backend. Make sure Python server is running on http://localhost:5001')
+      alert('Error connecting to backend. Make sure Python server is running and ngrok tunnel is active')
     } finally {
       setIsLoading(false)
       setSummaryLoading(false)
     }
   }
+
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -88,6 +96,7 @@ export default function Page() {
       handleSubmit(e)
     }
   }
+
 
   const handleBack = () => {
     setShowResults(false)
@@ -98,7 +107,9 @@ export default function Page() {
     setHasSearched(false)
   }
 
+
   const isActive = !!input.trim();
+
 
   function SummaryOverviewBox() {
     if (!hasSearched) return null;
@@ -154,12 +165,14 @@ export default function Page() {
     );
   }
 
+
   return (
     <div className={cn(
       "min-h-screen w-full flex flex-col items-center justify-center transition-colors duration-300 p-4",
       isDarkMode ? "bg-zinc-950 text-white" : "bg-zinc-100 text-zinc-900"
     )}>
       <SummaryOverviewBox />
+
 
       {!showResults ? (
         <form
