@@ -3,14 +3,14 @@ from flask_cors import CORS
 import requests
 from bs4 import BeautifulSoup
 from urllib.parse import quote
-
+import os
 
 app = Flask(__name__)
 CORS(app)
 
-
-OLLAMA = "http://localhost:11434/api/generate"
-
+# HuggingFace API configuration
+HF_API_KEY = os.getenv("HF_API_KEY")
+HF_MODEL_URL = "https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.2"
 
 def perform_search(query, num_results=10):
     try:
@@ -34,41 +34,41 @@ def perform_search(query, num_results=10):
         print(f"Error performing search: {e}")
         return []
 
-
-def overview_with_ollama(all_descriptions):
+def overview_with_huggingface(all_descriptions):
     try:
         text_to_summarize = "\n\n".join(all_descriptions)
         prompt = (
-            f"{text_to_summarize}\n\n"
-            "Summarize the above in 3-4 sentences using natural, conversational language:"
+            f"Summarize the following search results in 3-4 sentences using natural, conversational language:\n\n"
+            f"{text_to_summarize}"
         )
-        response = requests.post(
-            OLLAMA,
-            json={
-                "model": "tinyllama",
-                "prompt": prompt,
-                "stream": False,
+        
+        headers = {
+            "Authorization": f"Bearer {HF_API_KEY}",
+            "Content-Type": "application/json"
+        }
+        
+        payload = {
+            "inputs": prompt,
+            "parameters": {
+                "max_new_tokens": 100,
                 "temperature": 0.3,
-                "num_predict": 100,
-                "stop": ["\n\n", "Search results:", "Overview:"]
-            },
-            timeout=30
-        )
+                "top_p": 0.9
+            }
+        }
+        
+        response = requests.post(HF_MODEL_URL, headers=headers, json=payload, timeout=30)
         response.raise_for_status()
         data = response.json()
-        summary = data.get("response", "").strip()
         
-        if summary.startswith("Google AI Overview:"):
-            summary = summary.replace("Google AI Overview:", "").strip()
-        if summary.startswith("ONE short paragraph"):
-            summary = summary.split("\n")[-1].strip()
-        
-        return summary if summary else "Summary unavailable."
+        if isinstance(data, list) and len(data) > 0:
+            summary = data[0].get("generated_text", "Summary unavailable.")
+            if summary.startswith(prompt):
+                summary = summary.replace(prompt, "").strip()
+            return summary if summary else "Summary unavailable."
+        return "Summary unavailable."
     except Exception as e:
         print(f"Error generating overview: {e}")
         return "Overview generation failed."
-
-
 
 @app.route('/search', methods=['POST'])
 def search():
@@ -88,7 +88,6 @@ def search():
         print(f"API error: {e}")
         return jsonify({'error': str(e)}), 500
 
-
 @app.route('/overview', methods=['POST'])
 def overview():
     try:
@@ -96,19 +95,16 @@ def overview():
         descriptions = [r.get("description", "") for r in data.get('results',[])]
         if not descriptions or sum([len(d) for d in descriptions]) < 10:
             return jsonify({'overview': 'Nothing to summarize.'}), 200
-        summary = overview_with_ollama(descriptions)
+        summary = overview_with_huggingface(descriptions)
         return jsonify({'overview': summary}), 200
     except Exception as e:
         print(f"API error: {e}")
         return jsonify({'error': str(e)}), 500
 
-
 @app.route('/health', methods=['GET'])
 def health():
     return jsonify({'status': 'ok', 'message': 'Server is running'}), 200
 
-
 if __name__ == '__main__':
-    print("Starting Flask server on http://localhost:5001")
-    print("Connected to Ollama at http://localhost:11434")
-    app.run(debug=True, host='0.0.0.0', port=5001)
+    port = int(os.getenv('PORT', 5001))
+    app.run(debug=False, host='0.0.0.0', port=port)
