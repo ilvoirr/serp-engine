@@ -82,7 +82,7 @@ export default function Page() {
       }
     } catch (error) {
       console.error('Error fetching:', error)
-      alert('Error connecting to backend. Make sure Python server is running and ngrok tunnel is active')
+      alert('The App only works when Local LLM & Python Backend is hosted by Owner PC because Python Scaping is not deployable!!')
     } finally {
       setIsLoading(false)
       setSummaryLoading(false)
