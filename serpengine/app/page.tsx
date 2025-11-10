@@ -38,7 +38,7 @@ export default function Page() {
   const [summaryLoading, setSummaryLoading] = useState(false)
   const [hasSearched, setHasSearched] = useState(false)
 
-  const BACKEND_URL = 'https://455db55c4f14.ngrok-free.app'
+  const BACKEND_URL = 'https://e4d0482510f1.ngrok-free.app'
 
   const handleInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setInput(e.target.value)
